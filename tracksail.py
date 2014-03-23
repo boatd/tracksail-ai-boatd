@@ -1,6 +1,6 @@
 # Python wrapper to interface with Tracksail-AI
 
-# Copyright 2013 Louis Taylor
+# Copyright 2013-2014 Louis Taylor
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,50 +24,14 @@ def _float(v):
         return None
 
 class Tracksail(object):
-    class _Waypoint(object):
-        """The target point"""
-        def __init__(self, tracksail):
-            self.tracksail = tracksail
-
-        def __str__(self):
-            return 'distance: {}m, waypoint #{}, direction: {}'.format(
-                                                                self.distance,
-                                                                self.number,
-                                                                self.direction
-                                                                      )
-        
-        @property
-        def direction(self):
-            return self.tracksail._send_command('get waypointdir')
-
-        @property
-        def number(self):
-            return self.tracksail._send_command('get waypointnum')
-
-        @property
-        def distance(self):
-            return self.tracksail._send_command('get waypointdist')
-
-        def next(self):
-            self.tracksail._send_command('set waypoint')
-
-    def __init__(self):
+    def __init__(self, host='localhost', port=5555):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._rudderPos = 0
-        self._waypoint = self._Waypoint(self)
-
-    def connect(self, host='localhost', port=5555):
-        """Connect to tracksail"""
         self._socket.connect((host, port))
+        self._rudderPos = 0
 
     def _send_command(self, command):
         self._socket.send(command)
         return self._socket.recv(256)
-
-    def close(self):
-        """Close the connection to tracksail"""
-        print 'closing connection to tracksail...'
-        self._socket.close()
 
     @property
     def windDirection(self):
@@ -93,10 +57,6 @@ class Tracksail(object):
     @rudderPosition.setter
     def rudderPosition(self, value):
         self._send_command('set rudder {}'.format(int(value)))
-
-    @property
-    def waypoint(self):
-        return self._waypoint
 
     @property
     def latitude(self):
