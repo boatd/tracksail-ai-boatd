@@ -17,6 +17,9 @@
 
 import socket
 
+import boatd
+driver = boatd.Driver()
+
 def _float(v):
     if v:
         return float(v[:-1])
@@ -66,16 +69,23 @@ class Tracksail(object):
     def longitude(self):
         return self._send_command('get easting')
 
+tracksail = Tracksail()
 
-if __name__ == '__main__':
-    t = Tracksail()
-    t.connect()
-    print t.windDirection
-    print t.sailPosition
-    t.sailPosition = 320
-    print t.sailPosition
-    print t.waypoint
-    t.waypoint.next()
-    print t.waypoint
-    print t.waypoint.direction
-    t.close()
+@driver.heading
+def tracksail_heading():
+    return tracksail.bearing()
+
+@driver.wind
+def tracksail_wind():
+    return tracksail.windDirection
+
+@driver.position
+def tracksail_lat_long():
+    return (tracksail.latitude, tracksail.longitude)
+
+@driver.rudder
+def tracksail_set_rudder(angle):
+    if angle < 0:
+        tracksail.rudderPosition = -1 * angle
+    else:
+        tracksail.rudderPosition = 360 - angle
