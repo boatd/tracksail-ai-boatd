@@ -18,6 +18,8 @@
 import socket
 
 import boatd
+assert boatd.VERSION == 1.1
+
 driver = boatd.Driver()
 
 def _float(v):
