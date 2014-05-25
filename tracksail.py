@@ -75,7 +75,7 @@ tracksail = Tracksail()
 def tracksail_heading():
     return tracksail.bearing()
 
-@driver.wind
+@driver.wind_direction
 def tracksail_wind():
     return tracksail.windDirection
 
