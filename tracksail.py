@@ -61,7 +61,8 @@ class Tracksail(object):
 
     @rudderPosition.setter
     def rudderPosition(self, value):
-        self._send_command('set rudder {}'.format(int(value)))
+        value_rounded = int(round(value))
+        self._send_command('set rudder {}'.format(value_rounded))
 
     @property
     def latitude(self):
